@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Echo Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        #messages {
+            border: 1px solid #ddd;
+            height: 200px;
+            width: 50%;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<h2>WebSocket Echo Client</h2>
+<div id="messages">Messages will appear here...</div>
+<input type="text" id="messageInput" placeholder="Type a message" style="width: 300px;">
+<button id="sendButton">Send</button>
+
+<script>
+    // Create a WebSocket connection to the server
+    const socket = new WebSocket('ws://localhost:8080/echo');
+
+    // Attach the WebSocket object to the hidden DOM element
+    window.wsInstance = socket;
+
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const messagesDiv = document.getElementById('messages');
+
+    // Event handler for when the WebSocket connection is established
+    socket.addEventListener('open', function () {
+        messagesDiv.innerHTML += '<p><em>Connected to WebSocket server.</em></p>';
+    });
+
+    // Event handler for receiving messages from the server
+    socket.addEventListener('message', function (event) {
+        messagesDiv.innerHTML += '<p><strong>Server:</strong> ' + event.data + '</p>';
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Scroll to the latest message
+    });
+
+    // Event handler for the send button
+    sendButton.addEventListener('click', function () {
+        if (messageInput.value) {
+            socket.send(messageInput.value);  // Send the message to the WebSocket server
+            messagesDiv.innerHTML += '<p><strong>You:</strong> ' + messageInput.value + '</p>';
+            messageInput.value = '';  // Clear the input field
+        }
+    });
+
+    messageInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            sendButton.click();
+        }
+    });
+
+    // Event handler for when the WebSocket connection is closed
+    socket.addEventListener('close', function () {
+        messagesDiv.innerHTML += '<p><em>Disconnected from WebSocket server.</em></p>';
+    });
+
+    // Event handler for any errors
+    socket.addEventListener('error', function (event) {
+        messagesDiv.innerHTML += '<p><em>Error: ' + event.message + '</em></p>';
+    });
+</script>
+
+</body>
+</html>
