@@ -1,4 +1,4 @@
-if (window.location.href === 'file:///Users/grant/pdevel/extension-poc/ws-stuff/client/index.html') {
+if (window.location.href === 'CLIENT PAGE URL GOES HERE') {
     // Inject `injected.js` into the webpage
     const script = document.createElement('script');
     script.src = chrome.runtime.getURL('inject.js');
