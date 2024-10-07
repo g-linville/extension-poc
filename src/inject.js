@@ -11,7 +11,6 @@
         // Override the WebSocket's send method
         const originalSend = wsInstance.send;
         wsInstance.send = function(data) {
-            // Log and send the outgoing message to the content script via `postMessage`
             console.log(`Sent: ${data}`);
             window.postMessage({
                 type: 'wsData',
@@ -21,7 +20,6 @@
             return originalSend.apply(wsInstance, arguments);
         };
 
-        // Listen for incoming messages on the WebSocket
         wsInstance.addEventListener('message', (event) => {
             console.log(`Received: ${event.data}`);
             window.postMessage({
