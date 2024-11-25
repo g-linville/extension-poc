@@ -1,14 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "WebSocket Traffic Interceptor",
-  "description": "Intercept WebSocket traffic by injecting a custom WebSocket proxy.",
+  "name": "Browser Extension POC",
+  "description": "Control the browser through an extension.",
   "version": "1.0",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs",
+    "debugger"
   ],
   "host_permissions": [
-    "file://*/*"
+    "http://*/*",
+    "https://*/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -18,7 +21,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["file://*/*"],
+      "matches": ["http://localhost:9090/"],
       "js": ["content.js"],
       "run_at": "document_start"
     }
@@ -29,7 +32,7 @@
         "inject.js"
       ],
       "matches": [
-        "<all_urls>"
+        "http://localhost:9090/*"
       ]
     }
   ]

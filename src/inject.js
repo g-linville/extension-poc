@@ -4,10 +4,10 @@
     }
     sleep(2000).then(() => {
         const socket = window.wsInstance;
-        setupWebSocketInterceptor(socket);
+        setUpWebSocketInterceptor(socket);
     })
 
-    function setupWebSocketInterceptor(wsInstance) {
+    function setUpWebSocketInterceptor(wsInstance) {
         // Override the WebSocket's send method
         const originalSend = wsInstance.send;
         wsInstance.send = function(data) {
@@ -30,3 +30,7 @@
         });
     }
 })();
+
+document.addEventListener('wsOut', event => {
+    window.wsInstance.send(event.detail.data);
+});

@@ -1,0 +1,152 @@
+Name: Browser
+Description: Tools to navigate websites using a browser.
+Metadata: bundle: true
+Credentials: github.com/gptscript-ai/credentials/model-provider
+Share Tools: Browse, Get Page Contents, Filter, Fill, Click, Enter, Scroll, Back, Forward, Screenshot
+
+---
+Name: Get Page Contents
+Share Context: Browser Context
+Description: Returns the content of a website in Markdown format.
+Params: website: (optional) The HTTPS URL of the website to visit. If unspecified, the current tab will be used.
+Params: tabId: (optional) The ID of the tab. If unspecified, a new tab will be created.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts getPageContents
+
+---
+Name: Browse
+Metadata: index: false
+Share Context: Browser Context
+Description: Navigates to a website, but does not return the content.
+Params: website: (required) The URL of the website to visit. Must be an HTTPS URL.
+Params: tabId: (optional) The ID of the tab. If unspecified, a new tab will be created, and its ID will be returned.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts browse
+
+
+---
+Name: Filter
+Metadata: index: false
+Share Context: Browser Context
+Description: filter the page to get elements based on specific id, html tag, or class.
+Params: filter: (required) the class (eg. '.foo') or id (eg. '#foo') of an object.
+Params: tabId: (required) The ID of the tab to filter contents of.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts getFilteredContent
+
+---
+Name: Fill
+Metadata: index: false
+Share Context: Browser Context
+Description: Fills text into an element on the web page. Useful for filling out forms and other input fields.
+Params: userInput: (required) Description of the element to fill. This will be used by the AI to determine which element to pick from the results. Be as detailed as possible, but don't make anything up or make any assumptions.
+Params: keywords: (required) Comma-separated list of keywords related to the element. These will be used to search for the element on the page. ALWAYS include at least one keyword.
+Params: matchTextOnly: (optional, default false) Matches elements based on their text content and ignores their attributes. Useful for cases where the user has provided an exact piece of text that they want to interact with on the page.
+Params: content: The text to fill into the element.
+Params: tabId: (required) The ID of the tab.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts fill
+
+---
+Name: Click
+Metadata: index: false
+Share Context: Browser Context
+Description: Clicks on an element on the web page.
+Params: userInput: (required) Description of the element to click. This will be used by the AI to determine which element to pick from the results. Be as detailed as possible, but don't make anything up or make any assumptions.
+Params: keywords: (required) Comma-separated list of keywords related to the element. These will be used to search for the element on the page. ALWAYS include at least one keyword.
+Params: matchTextOnly: (optional, default false) Matches elements based on their text content and ignores their attributes. Useful for cases where the user has provided an exact piece of text that they want to interact with on the page.
+Params: tabId: (required) The ID of the tab.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts click
+
+---
+Name: Enter
+Metadata: index: false
+Share Context: Browser Context
+Description: Presses the enter key. Useful after filling out a form or other input.
+Params: tabId: (required) The ID of the tab.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts enter
+
+---
+Name: Scroll
+Metadata: index: false
+Share Context: Browser Context
+Description: Scrolls to the bottom of the page, possibly loading more content. Useful for sites like Reddit which support infinite scroll.
+Params: tabId: (required) The ID of the tab.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts scrollToBottom
+
+---
+Name: Screenshot
+Metadata: index: false
+Share Context: Browser Context
+Description: Take a screenshot of the given tabId
+Params: tabId: (required) The ID of the tab.
+Params: fullPage: (optional) Take a full page screenshot. Defaults to false, which takes a screenshot of the current viewport.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts screenshot
+
+---
+Name: Back
+Metadata: index: false
+Share Context: Browser Context
+Description: Navigates to back to the previous site in history.
+Params: tabId: (required) The ID of the tab.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts back
+
+---
+Name: Forward
+Share Context: Browser Context
+Description: Navigates to forward to the next site in history.
+Params: tabId: (required) The ID of the tab.
+Params: followMode: (optional) If true, the tool will produce a screenshot of the final page state. Defaults to false.
+
+#!/usr/bin/env node --no-warnings --loader ts-node/esm index.ts forward
+
+---
+Name: Browser Context
+Metadata: index: false
+Type: context
+Share Context: github.com/otto8-ai/tools/time
+
+#!sys.echo
+
+START TOOL USAGE: The `tabId` parameter
+
+You can create new tabs with the `Browse` or `Get Page Contents` tools by passing them a `website` and omitting the `tabId`.
+You can reuse an existing tab by passing the `tabId` of the tab you want to reuse.
+Each browser tab has mutable state that changes with every tool call that uses its `tabId`.
+Do not make parallel tool calls with the same `tabId`.
+
+END TOOL USAGE: The `tabId` parameter
+
+START TOOL USAGE: The `followMode` parameter
+
+Every tool that takes a `followMode` parameter will return a screenshot when `followMode=true`.
+
+When "follow mode" is enabled by the user, you must ALWAYS set `followMode=true` for EVERY tool call until "follow mode" is explicitly disabled by the user.
+
+While "follow mode" is enabled, do not make parallel tool calls. Execute each tool call synchronously, waiting for each to complete before making the next call.
+
+END TOOL USAGE: The `followMode` parameter
+
+START TOOL USAGE: The `screenshotInfo` response field
+
+Tools can return JSON objects containing a `screenshotInfo` field indicating that a screenshot of the page was taken.
+
+This field is an object that contains the `tabId`, `tabPageUrl`, `takenAt`, `imageWorkspaceFile`, and `imageDownloadUrl` of a screenshot.
+
+Screenshots can only be displayed to the user by embedding their `imageDownloadUrl` in markdown; e.g. `![screenshot](${imageDownloadUrl})`
+
+When the `screenshotInfo` field is present in tool response, ALWAYS stop what you're doing and display the respective screenshot to the user immediately before continuing.
+
+END TOOL USAGE: The `screenshotInfo` response field

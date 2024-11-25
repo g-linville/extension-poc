@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Echo Client</title>
+    <title>WebSocket Client</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,13 +21,13 @@
     </style>
 </head>
 <body>
-<h2>WebSocket Echo Client</h2>
+<h2>WebSocket Client</h2>
 <div id="messages">Messages will appear here...</div>
 <input type="text" id="messageInput" placeholder="Type a message" style="width: 300px;">
 <button id="sendButton">Send</button>
 
 <script>
-    const socket = new WebSocket('ws://localhost:8080/echo');
+    const socket = new WebSocket('ws://localhost:8080/connect');
 
     // Attach the WebSocket object to the window so that the injection script can get it too
     window.wsInstance = socket;

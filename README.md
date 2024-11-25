@@ -1,3 +1,3 @@
 # Extension POC
 
-Proof-of-concept Chrome extension for use with GPTScript.
+Proof-of-concept Chrome extension to control the browser.
